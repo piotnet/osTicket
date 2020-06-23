@@ -29,6 +29,7 @@ $isManager = $dept->isManager($thisstaff); //Check if Agent is Manager
 $canRelease = ($isManager || $role->hasPerm(Ticket::PERM_RELEASE)); //Check if Agent can release tickets
 $blockReply = $ticket->isChild() && $ticket->getMergeType() != 'visual';
 $canMarkAnswered = ($isManager || $role->hasPerm(Ticket::PERM_MARKANSWERED)); //Check if Agent can mark as answered/unanswered
+$purchases = $ticket->getPurchases();
 
 //Useful warnings and errors the user might want to know!
 if ($ticket->isClosed() && !$ticket->isReopenable())
@@ -636,6 +637,58 @@ if($ticket->isOverdue())
                 </tr>
             </table>
         </td>
+    </tr>
+</table>
+<br>
+<table class="ticket_info" cellspacing="0" cellpadding="0" width="940" border="0">
+    <tr>
+        <?php
+        if(!is_null($purchases)) { ?>
+            <td width="50%">
+                <table cellspacing="0" cellpadding="4" width="100%" border="0">
+                    <tr>
+                        <th width="100">Single:</th>
+                        <td>
+                            <?php echo $purchases->single->date;?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width="100">Unlimited:</th>
+                        <td>
+                            <?php echo $purchases->unlimited->date;?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width="100">Lifetime:</th>
+                        <td>
+                            <?php echo $purchases->lifetime->date;?>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="50%">
+                <table cellspacing="0" cellpadding="4" width="100%" border="0">
+                    <tr>
+                        <th width="100">Domains:</th>
+                        <td>
+                            <?php echo $purchases->domain;?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width="100">TODO:</th>
+                        <td>
+                            Intergration with PAFE purchases >"<
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <?php
+        } else { ?>
+            <td width="100%">
+                <p><b>Can't get PAFE purchases.</b></p>
+            </td>
+            <?php
+        } ?>
     </tr>
 </table>
 <br>

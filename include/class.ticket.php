@@ -4741,6 +4741,27 @@ EOF;
             }
         }
     }
+
+    function getPurchases() {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://pafe.piotnet.com/api/",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "email=" . $this->getEmail()
+        ));
+
+        try {
+            $response = curl_exec($curl);
+            curl_close($curl);
+            return json_decode($response);
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+        return null;
+    }
 }
 RolePermission::register(/* @trans */ 'Tickets', Ticket::getPermissions(), true);
 
