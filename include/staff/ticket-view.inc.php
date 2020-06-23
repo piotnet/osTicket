@@ -674,12 +674,6 @@ if($ticket->isOverdue())
                             <?php echo $purchases->domain;?>
                         </td>
                     </tr>
-                    <tr>
-                        <th width="100">TODO:</th>
-                        <td>
-                            Intergration with PAFE purchases >"<
-                        </td>
-                    </tr>
                 </table>
             </td>
             <?php
