@@ -503,6 +503,9 @@ $ost->addExtraHeader('<script type="text/javascript" src="js/thread.js"></script
 $ost->addExtraHeader('<meta name="tip-namespace" content="tickets.queue" />',
     "$('#content').data('tipNamespace', 'tickets.queue');");
 
+$ost->addExtraHeader('<link type="text/css" rel="stylesheet" href="/scp/css/jquery.toast.min.css">');
+$ost->addExtraHeader('<script type="text/javascript" src="/scp/js/jquery.toast.min.js"></script>');
+
 if($ticket) {
     $ost->setPageTitle(sprintf(__('Ticket #%s'),$ticket->getNumber()));
     $nav->setActiveSubMenu(-1);

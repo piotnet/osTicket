@@ -29,7 +29,6 @@ $isManager = $dept->isManager($thisstaff); //Check if Agent is Manager
 $canRelease = ($isManager || $role->hasPerm(Ticket::PERM_RELEASE)); //Check if Agent can release tickets
 $blockReply = $ticket->isChild() && $ticket->getMergeType() != 'visual';
 $canMarkAnswered = ($isManager || $role->hasPerm(Ticket::PERM_MARKANSWERED)); //Check if Agent can mark as answered/unanswered
-$purchases = $ticket->getPurchases();
 
 //Useful warnings and errors the user might want to know!
 if ($ticket->isClosed() && !$ticket->isReopenable())
@@ -639,52 +638,7 @@ if($ticket->isOverdue())
         </td>
     </tr>
 </table>
-<br>
-<table class="ticket_info" cellspacing="0" cellpadding="0" width="100%" border="0">
-    <tr>
-        <?php
-        if(!is_null($purchases)) { ?>
-            <td width="50%">
-                <table cellspacing="0" cellpadding="4" width="100%" border="0">
-                    <tr>
-                        <th width="100">Single:</th>
-                        <td>
-                            <?php echo $purchases->single->date;?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th width="100">Unlimited:</th>
-                        <td>
-                            <?php echo $purchases->unlimited->date;?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th width="100">Lifetime:</th>
-                        <td>
-                            <?php echo $purchases->lifetime->date;?>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td width="50%">
-                <table cellspacing="0" cellpadding="4" width="100%" border="0">
-                    <tr>
-                        <th width="100">Domains:</th>
-                        <td>
-                            <?php echo $purchases->domain;?>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <?php
-        } else { ?>
-            <td width="100%">
-                <p><b>Can't get PAFE purchases.</b></p>
-            </td>
-            <?php
-        } ?>
-    </tr>
-</table>
+
 <br>
 <?php
 foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
@@ -774,6 +728,94 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
     </tbody>
     </table>
 <?php } ?>
+
+<?php
+function get_license_email($ticket, $user, $name, $field_key) {
+    foreach ($user->getDynamicData() as $entry) {
+        if ($entry->getFormId() == 1) {
+            foreach ($entry->getAnswers() as $answer) {
+                $value = $answer->getValue();
+                if ($answer->getField()->get('name') == $field_key && !empty($value)) {
+                    echo '<div><b>' . $name . ' License Email:</b> '. $value .'</div><br>';
+                    return $value;
+                }
+            }
+        }
+    }
+    return $ticket->getEmail();
+}
+
+$pafe_license_email = get_license_email($ticket, $user, 'PAFE', 'pafe_license_email');
+$forms_license_email = get_license_email($ticket, $user, 'Forms', 'forms_license_email');
+
+?>
+
+<style>
+    .license_info td, .license_info th {
+        border: 1px solid #ddd;
+        padding: 4px;
+    }
+
+    .license_info tr:nth-child(even){background-color: #f2f2f2;}
+
+    .license_info tr:hover {background-color: #ddd;}
+
+    .license_info th {
+        padding-top: 4px;
+        padding-bottom: 4px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+    }
+</style>
+<div class="license_info pafe">
+    <b>PAFE</b>
+    <div class="info">Loading...</div>
+    <div class="details"></div>
+</div>
+
+<br>
+<div class="license_info forms">
+    <b>Forms</b>
+    <div class="info">Loading...</div>
+    <div class="details"></div>
+</div>
+
+<br>
+
+<script>
+    function get_license(name, url, main_class, department_id) {
+        jQuery.ajax({
+            url: url,
+        }).done(function(data) {
+            // console.log(data);
+            $license_info = $(".license_info." + main_class);
+            $license_info.find('.info').html(data['completed_products_html']);;
+            $license_info.find('.details').html(data['table_html']);;
+
+            console.log(data);
+            if (department_id == <?php echo $dept->getId(); ?> && data.completed_products.length == 0) {
+                jQuery.toast({
+                    heading: 'No ' + name + ' license',
+                    text: 'Hỏi email khách',
+                    hideAfter: false,
+                    position: { top: 60, right: 70 },
+                    icon: 'warning',
+                    allowToastClose: true
+                    // heading: 'Closeable Toast',
+                })
+            }
+        }).fail(function(err) {
+            $license_info = $(".license_info." + main_class);
+            $license_info.find('.info').html("Can't get license info");
+
+        });
+    }
+    $.toast().reset('all');
+    get_license("PAFE", "https://pafe.piotnet.com/connect/v1/osticket.php?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
+    get_license("Forms", "https://piotnetforms.com/connect/v1/osticket.php?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
+</script>
+
 <div class="clear"></div>
 
 <?php
