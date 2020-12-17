@@ -788,12 +788,10 @@ $forms_license_email = get_license_email($ticket, $user, 'Forms', 'forms_license
         jQuery.ajax({
             url: url,
         }).done(function(data) {
-            // console.log(data);
             $license_info = $(".license_info." + main_class);
             $license_info.find('.info').html(data['completed_products_html']);;
             $license_info.find('.details').html(data['table_html']);;
 
-            console.log(data);
             if (department_id == <?php echo $dept->getId(); ?> && data.completed_products.length == 0) {
                 jQuery.toast({
                     heading: 'No ' + name + ' license',
