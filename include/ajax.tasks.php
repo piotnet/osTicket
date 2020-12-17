@@ -110,6 +110,7 @@ class TasksAjaxAPI extends AjaxController {
                 $vars['default_formdata'] = $form->getClean();
                 $vars['internal_formdata'] = $iform->getClean();
                 $desc = $form->getField('description');
+                $vars['description'] = $desc->getClean();
                 if ($desc
                         && $desc->isAttachmentsEnabled()
                         && ($attachments=$desc->getWidget()->getAttachments()))
@@ -667,7 +668,7 @@ class TasksAjaxAPI extends AjaxController {
 
         if (!$task->checkStaffPerm($thisstaff, Task::PERM_ASSIGN)
                 || !($form=$task->getAssignmentForm($_POST, array(
-                            'target' => $target))))
+                            'target' => $target, 'filterVisibility' => true))))
             Http::response(403, __('Permission denied'));
 
         $errors = array();
