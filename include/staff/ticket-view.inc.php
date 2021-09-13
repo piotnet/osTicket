@@ -782,6 +782,13 @@ $forms_license_email = get_license_email($ticket, $user, 'Forms', 'forms_license
 </div>
 
 <br>
+<div class="license_info grid">
+    <b>Grid</b>
+    <div class="info">Loading...</div>
+    <div class="details"></div>
+</div>
+
+<br>
 
 <script>
     function get_license(name, url, main_class, department_id) {
@@ -812,6 +819,7 @@ $forms_license_email = get_license_email($ticket, $user, 'Forms', 'forms_license
     $.toast().reset('all');
     get_license("PAFE", "https://pafe.piotnet.com/connect/v1/osticket.php?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
     get_license("Forms", "https://piotnetforms.com/connect/v1/osticket.php?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
+    get_license("Grid", "https://my.piotnetgrid.com/connect/v1/osticket.php?email=<?php echo urlencode($forms_license_email);?>", "grid", 6);
 </script>
 
 <div class="clear"></div>
