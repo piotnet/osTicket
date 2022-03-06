@@ -88,6 +88,7 @@ implements RestrictedAccess, Threadable, Searchable {
                     'ticket_id'  => 'TicketThread.object_id',
                     "'C'" => 'TicketThread.object_type',
                 ),
+                'searchable' => false,
                 'null' => true,
             ),
             'cdata' => array(
@@ -251,7 +252,7 @@ implements RestrictedAccess, Threadable, Searchable {
         return $this->_children ?: array();
     }
 
-    function getMergeTypeByFlag($flag) {
+    static function getMergeTypeByFlag($flag) {
         if (($flag & self::FLAG_COMBINE_THREADS) != 0)
             return 'combine';
         if (($flag & self::FLAG_SEPARATE_THREADS) != 0)
@@ -278,10 +279,15 @@ implements RestrictedAccess, Threadable, Searchable {
         return false;
     }
 
-    function isParent($flag=false) {
-        if (is_numeric($flag) && ($flag & self::FLAG_PARENT) != 0)
+    function isParent() {
+        if ($this->hasFlag(self::FLAG_PARENT))
             return true;
-        elseif (!is_numeric($flag) && $this->hasFlag(self::FLAG_PARENT))
+
+        return false;
+    }
+
+    static function isParentStatic($flag=false) {
+        if (is_numeric($flag) && ($flag & self::FLAG_PARENT) != 0)
             return true;
 
         return false;
@@ -1526,8 +1532,6 @@ implements RestrictedAccess, Threadable, Searchable {
 
                 $ecb = function($t) use ($status) {
                     $t->logEvent('closed', array('status' => array($status->getId(), $status->getName())), null, 'closed');
-                    $type = array('type' => 'closed');
-                    Signal::send('object.edited', $t, $type);
                     $t->deleteDrafts();
                 };
                 break;
@@ -2085,7 +2089,7 @@ implements RestrictedAccess, Threadable, Searchable {
             && ($msg=$tpl->getAssignedAlertMsgTemplate())
         ) {
             $msg = $this->replaceVars($msg->asArray(),
-                array('comments' => $comments,
+                array('comments' => $comments ?: '',
                       'assignee' => $assignee,
                       'assigner' => $assigner
                 )
@@ -2491,7 +2495,7 @@ implements RestrictedAccess, Threadable, Searchable {
         return true;
     }
 
-    function manageMerge($tickets) {
+    static function manageMerge($tickets) {
         global $thisstaff;
 
         $permission = ($tickets['title'] && $tickets['title'] == 'link') ? (Ticket::PERM_LINK) : (Ticket::PERM_MERGE);
@@ -2555,7 +2559,7 @@ implements RestrictedAccess, Threadable, Searchable {
         return $ticketObjects;
     }
 
-    function merge($tickets) {
+    static function merge($tickets) {
         $options = $tickets;
         if (!$tickets = self::manageMerge($tickets))
             return false;
@@ -3094,7 +3098,7 @@ implements RestrictedAccess, Threadable, Searchable {
             if ($vars['userId']) {
                 $user = User::lookup($vars['userId']);
              } elseif ($vars['header']
-                    && ($hdr= Mail_parse::splitHeaders($vars['header'], true))
+                    && ($hdr= Mail_Parse::splitHeaders($vars['header'], true))
                     && $hdr['From']
                     && ($addr= Mail_Parse::parseAddressList($hdr['From']))) {
                 $info = array(
@@ -3959,7 +3963,7 @@ implements RestrictedAccess, Threadable, Searchable {
         return db_fetch_array(db_query($sql));
     }
 
-    protected function filterTicketData($origin, $vars, $forms, $user=false, $postCreate=false) {
+    protected static function filterTicketData($origin, $vars, $forms, $user=false, $postCreate=false) {
         global $cfg;
 
         // Unset all the filter data field data in case things change
@@ -4018,6 +4022,22 @@ implements RestrictedAccess, Threadable, Searchable {
             // Init ticket filters...
             $ticket_filter = new TicketFilter($origin, $vars);
             $ticket_filter->apply($vars, $postCreate);
+
+            if ($postCreate && $filterMatches = $ticket_filter->getMatchingFilterList()) {
+                $username = __('Ticket Filter');
+                foreach ($filterMatches as $f) {
+                    $actions = $f->getActions();
+                    foreach ($actions as $key => $value) {
+                        $filterName = $f->getName();
+                        if (!$coreClass = $value->lookupByType($value->type))
+                            continue;
+
+                        if ($description = $coreClass->getEventDescription($value, $filterName))
+                            $postCreate->logEvent($description['type'], $description['desc'], $username);
+
+                    }
+                }
+            }
         }
         catch (FilterDataChanged $ex) {
             // Don't pass user recursively, assume the user has changed
@@ -4418,7 +4438,7 @@ implements RestrictedAccess, Threadable, Searchable {
 
         $vars['ticket'] = $ticket;
         self::filterTicketData($origin, $vars,
-            array_merge(array($form), $topic_forms), $user, true);
+            array_merge(array($form), $topic_forms), $user, $ticket);
 
         // If a message was posted, flag it as the orignal message. This
         // needs to be done on new ticket, so as to otherwise separate the
