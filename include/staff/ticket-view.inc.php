@@ -818,9 +818,9 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
         });
     }
     $.toast().reset('all');
-    get_license("PAFE", "https://pafe.piotnet.com/connect/v1/osticket.php?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
-    get_license("Forms", "https://piotnetforms.com/connect/v1/osticket.php?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
-    get_license("Grid", "https://my.piotnetgrid.com/connect/v1/osticket.php?email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
+    get_license("PAFE", "https://piotnet:kv2mVaUR9Y2cm@pafe-api.piotnet.com/getLicenseForOsTicket?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
+    get_license("Forms", "https://piotnet:kv2mVaUR9Y2cm@api.piotnetforms.com/getLicenseForOsTicket?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
+    get_license("Grid", "https://piotnet:kv2mVaUR9Y2cm@api.piotnetgrid.com/getLicenseForOsTicket?email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
 </script>
 
 <div class="clear"></div>
