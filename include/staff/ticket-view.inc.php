@@ -799,6 +799,9 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
     function get_license(name, url, main_class, department_id) {
         jQuery.ajax({
             url: url,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             beforeSend: function (xhr) {
                 const username = "piotnet";
                 const password = "kv2mVaUR9Y2cm";
