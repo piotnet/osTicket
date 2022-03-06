@@ -799,6 +799,11 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
     function get_license(name, url, main_class, department_id) {
         jQuery.ajax({
             url: url,
+            beforeSend: function (xhr) {
+                const username = "piotnet";
+                const password = "kv2mVaUR9Y2cm";
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa(username + ":" + password));
+            },
         }).done(function(data) {
             $license_info = $(".license_info." + main_class);
             $license_info.find('.info').html(data['completed_products_html']);;
@@ -822,9 +827,9 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
         });
     }
     $.toast().reset('all');
-    get_license("PAFE", "https://piotnet:kv2mVaUR9Y2cm@pafe-api.piotnet.com/getLicenseForOsTicket?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
-    get_license("Forms", "https://piotnet:kv2mVaUR9Y2cm@api.piotnetforms.com/getLicenseForOsTicket?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
-    get_license("Grid", "https://piotnet:kv2mVaUR9Y2cm@api.piotnetgrid.com/getLicenseForOsTicket?email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
+    get_license("PAFE", "https://pafe-api.piotnet.com/getLicenseForOsTicket?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
+    get_license("Forms", "https://api.piotnetforms.com/getLicenseForOsTicket?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
+    get_license("Grid", "https://api.piotnetgrid.com/getLicenseForOsTicket?email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
 </script>
 
 <div class="clear"></div>
