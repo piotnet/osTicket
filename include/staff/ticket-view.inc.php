@@ -798,21 +798,13 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
 <script>
     function get_license(name, url, main_class, department_id) {
         jQuery.ajax({
-            url: url,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            beforeSend: function (xhr) {
-                const username = "piotnet";
-                const password = "kv2mVaUR9Y2cm";
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa(username + ":" + password));
-            },
+            url: url
         }).done(function(data) {
             $license_info = $(".license_info." + main_class);
             $license_info.find('.info').html(data['completed_products_html']);;
             $license_info.find('.details').html(data['table_html']);;
 
-            if (department_id == <?php echo $dept->getId(); ?> && data.completed_products.length == 0) {
+            if (department_id == <?php echo $dept->getId(); ?> && data.completedProducts.length == 0) {
                 jQuery.toast({
                     heading: 'No ' + name + ' license',
                     text: 'Hỏi email khách',
