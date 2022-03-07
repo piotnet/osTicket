@@ -801,8 +801,8 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
             url: url
         }).done(function(data) {
             $license_info = $(".license_info." + main_class);
-            $license_info.find('.info').html(data['completed_products_html']);;
-            $license_info.find('.details').html(data['table_html']);;
+            $license_info.find('.info').html(data['completedProductsHTML']);;
+            $license_info.find('.details').html(data['tableHTML']);;
 
             if (department_id == <?php echo $dept->getId(); ?> && data.completedProducts.length == 0) {
                 jQuery.toast({
