@@ -749,6 +749,24 @@ function get_license_email($ticket, $user, $name, $field_key) {
     return $ticket->getEmail();
 }
 
+function get_classify_user($ticket, $user, $field_key, $default) {
+    foreach ($user->getDynamicData() as $entry) {
+        if ($entry->getFormId() == 1) {
+            foreach ($entry->getAnswers() as $answer) {
+                $value = $answer->getValue();
+                if ($answer->getField()->get('name') == $field_key) {
+                    if (!empty($value)) {
+                        return $value;
+                    }
+                }
+            }
+        }
+    }
+    return $default;
+}
+
+$classify_user = get_classify_user($ticket, $user, 'classify', 'normal');
+
 $pafe_license_email = get_license_email($ticket, $user, 'PAFE', 'pafe_license_email');
 $forms_license_email = get_license_email($ticket, $user, 'Forms', 'forms_license_email');
 $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_email');
@@ -825,6 +843,33 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
     get_license("PAFE", "https://pafe-api.piotnet.com/getLicenseForOsTicket?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
     get_license("Forms", "https://api.piotnetforms.com/getLicenseForOsTicket?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
     get_license("Grid", "https://api.piotnetgrid.com/getLicenseForOsTicket?email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
+
+    var classify_user = '<?php echo $classify_user; ?>';
+    if (classify_user == 'blacklist') {
+        jQuery.toast({
+            text: 'Blacklist client',
+            position: { top: 60, right: 70 },
+            icon: 'error',
+            hideAfter: false,
+            allowToastClose: false
+        })
+    } else if (classify_user == 'friendly') {
+        jQuery.toast({
+            text: 'Friendly client',
+            position: { top: 60, right: 70 },
+            icon: 'info',
+            hideAfter: false,
+            allowToastClose: false
+        })
+    } else if (classify_user == 'vip') {
+        jQuery.toast({
+            text: 'VIP client',
+            position: { top: 60, right: 70 },
+            icon: 'info',
+            hideAfter: false,
+            allowToastClose: false
+        })
+    }
 </script>
 
 <div class="clear"></div>
