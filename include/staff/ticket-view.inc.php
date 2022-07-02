@@ -840,9 +840,9 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
         });
     }
     $.toast().reset('all');
-    get_license("PAFE", "https://pafe-api.piotnet.com/getLicenseForOsTicket?email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
-    get_license("Forms", "https://api.piotnetforms.com/getLicenseForOsTicket?email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
-    get_license("Grid", "https://api.piotnetgrid.com/getLicenseForOsTicket?email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
+    get_license("PAFE", "https://pafe-api.piotnet.com/getLicenseForOsTicket?pluginId=1&email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
+    get_license("Forms", "https://api.piotnetforms.com/getLicenseForOsTicket?pluginId=2&email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
+    get_license("Grid", "https://api.piotnetgrid.com/getLicenseForOsTicket?pluginId=3&email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
 
     var classify_user = '<?php echo $classify_user; ?>';
     if (classify_user == 'blacklist') {
