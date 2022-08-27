@@ -770,6 +770,7 @@ $classify_user = get_classify_user($ticket, $user, 'classify', 'normal');
 $pafe_license_email = get_license_email($ticket, $user, 'PAFE', 'pafe_license_email');
 $forms_license_email = get_license_email($ticket, $user, 'Forms', 'forms_license_email');
 $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_email');
+$bricks_license_email = get_license_email($ticket, $user, 'Bricks', 'bricks_license_email');
 
 ?>
 
@@ -812,6 +813,13 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
 </div>
 
 <br>
+<div class="license_info bricks">
+    <b>Bricks</b>
+    <div class="info">Loading...</div>
+    <div class="details"></div>
+</div>
+
+<br>
 
 <script>
     function get_license(name, url, main_class, department_id) {
@@ -840,9 +848,10 @@ $grid_license_email = get_license_email($ticket, $user, 'Grid', 'grid_license_em
         });
     }
     $.toast().reset('all');
-    get_license("PAFE", "https://pafe-api.piotnet.com/getLicenseForOsTicket?pluginId=1&email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
-    get_license("Forms", "https://api.piotnetforms.com/getLicenseForOsTicket?pluginId=2&email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
-    get_license("Grid", "https://api.piotnetgrid.com/getLicenseForOsTicket?pluginId=3&email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
+    get_license("PAFE", "https://api.piotnet.com/getLicenseForOsTicket?pluginId=1&email=<?php echo urlencode($pafe_license_email);?>", "pafe", 4);
+    get_license("Forms", "https://api.piotnet.com/getLicenseForOsTicket?pluginId=2&email=<?php echo urlencode($forms_license_email);?>", "forms", 5);
+    get_license("Grid", "https://api.piotnet.com/getLicenseForOsTicket?pluginId=3&email=<?php echo urlencode($grid_license_email);?>", "grid", 6);
+    get_license("Bricks", "https://api.piotnet.com/getLicenseForOsTicket?pluginId=4&email=<?php echo urlencode($bricks_license_email);?>", "bricks", 8);
 
     var classify_user = '<?php echo $classify_user; ?>';
     if (classify_user == 'blacklist') {
