@@ -879,6 +879,35 @@ $bricks_license_email = get_license_email($ticket, $user, 'Bricks', 'bricks_lice
             allowToastClose: false
         })
     }
+
+    function showUnclassifiedToast() {
+        return jQuery.toast({
+            text: 'Hãy phân loại Ticket',
+            position: { top: 60, right: 70 },
+            icon: 'warning',
+            hideAfter: false,
+            allowToastClose: false
+        })
+    }
+
+    var helpTopicId = <?php echo $ticket->getTopicId(); ?>;
+    var unclassifiedTopicId = 17;
+    var unclassifiedTopicText = 'Unclassified';
+
+    var unclassifiedToast = null;
+    if (helpTopicId === unclassifiedTopicId) {
+        unclassifiedToast = showUnclassifiedToast();
+    }
+
+    var field_topic = $('#field_topic');
+    field_topic.on('DOMSubtreeModified', function() {
+        var helpTopicText = field_topic.text().trim();
+        if (helpTopicText === unclassifiedTopicText) {
+            unclassifiedToast = showUnclassifiedToast();
+        } else if (unclassifiedToast) {
+            unclassifiedToast.reset();
+        }
+    });
 </script>
 
 <div class="clear"></div>
